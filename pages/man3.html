@@ -3,10 +3,15 @@
 <head>
 	<meta charset="utf-8">
 	<title>Mandango - Билет в кино для Мачо</title>
+	<style>
+		a {
+			margin: 25px;
+		}
+	</style>
 </head>
 <body onload="initSeats();">
-<div class="nav">
-	<a href="index.html">example</a>
+<div class="nav"  style="width: fit-content; margin: 25px auto">
+	<a href="../index.html">example</a>
 	<a href="man2.html">task 2</a>
 	<a href="man3.html">task 3</a>
 	<a href="man4.html">task 4</a>
@@ -32,10 +37,10 @@
 		seats.forEach((seat, i) => {
 			const currentSeat = document.getElementById("seat" + i)
 			if (seat) {
-				currentSeat.src = "seat_avail.png"
+				currentSeat.src = "../seat_avail.png"
 				currentSeat.alt = "Место свободно"
 			} else {
-				currentSeat.src = "seat_unavail.png"
+				currentSeat.src = "../seat_unavail.png"
 				currentSeat.alt = "Место занято"
 			}
 		})
@@ -48,25 +53,33 @@
 		}
 
 		for (let i = 0; i < seats.length; ++i) {
+			const nextTreeSeats = seats[i] && seats[i + 1] && seats[i + 2]
+			if (!nextTreeSeats) continue
+			const currentSeats = [
+				document.getElementById("seat" + i),
+				document.getElementById("seat" + (i + 1)),
+				document.getElementById("seat" + (i + 2))
+			]
 
-			const currentSeat = document.getElementById("seat" + i)
+			selSeat = i
+			currentSeats.forEach(seat => {
+				seat.src = "../seat_select.png"
+				seat.alt = "Ваше место"
+			})
+			const accept = confirm(`Места ${ i + 1 }-${ i + 3 } свободны. Принять?`)
 
-			if (seats[i]) {
-				selSeat = i
+			if (!accept) {
+				selSeat = -1
 
-				currentSeat.src = "seat_select.png"
-				currentSeat.alt = "Ваше место"
-				const accept = confirm("Место " + (i + 1) + " свободно. Принять?")
-
-				if (!accept) {
-					selSeat = -1
-
-					currentSeat.src = "seat_avail.png"
-					currentSeat.alt = "Место свободно"
-				} else {
-					seats[i] = false
-					break
-				}
+				currentSeats.forEach(seat => {
+					seat.src = "../seat_avail.png"
+					seat.alt = "Место свободно"
+				})
+			} else {
+				seats[i] = false
+				seats[i + 1] = false
+				seats[i + 2] = false
+				break
 			}
 		}
 	}
