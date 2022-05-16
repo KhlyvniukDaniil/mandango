@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Mandango - Билет в кино для Мачо</title>
+</head>
+<body onload="initSeats();">
+<div style="margin-top:75px; text-align:center">
+	<img id="seat0" src="" alt="">
+	<img id="seat1" src="" alt="">
+	<img id="seat2" src="" alt="">
+	<img id="seat3" src="" alt="">
+	<img id="seat4" src="" alt="">
+	<img id="seat5" src="" alt="">
+	<img id="seat6" src="" alt="">
+	<img id="seat7" src="" alt="">
+	<img id="seat8" src="" alt=""><br>
+	<input type="button" id="findseat" value="Найти место" onclick="findSeat();">
+</div>
+
+<script>
+	const seats = [ false, true, false, true, true, true, false, true, false ]
+	let selSeat = -1
+
+	const initSeats = () => {
+		seats.forEach((seat, i) => {
+			const currentSeat = document.getElementById("seat" + i)
+			if (seat) {
+				currentSeat.src = "seat_avail.png"
+				currentSeat.alt = "Место свободно"
+			} else {
+				currentSeat.src = "seat_unavail.png"
+				currentSeat.alt = "Место занято"
+			}
+		})
+	}
+
+	const findSeat = () => {
+		if (selSeat >= 0) {
+			selSeat = -1
+			initSeats()
+		}
+
+		for (let i = 0; i < seats.length; ++i) {
+			const nextTreeSeats = seats[i] && seats[i + 1] && seats[i + 2]
+			if (!nextTreeSeats) continue
+			const currentSeats = [
+				document.getElementById("seat" + i),
+				document.getElementById("seat" + (i + 1)),
+				document.getElementById("seat" + (i + 2))
+			]
+
+			selSeat = i
+			currentSeats.forEach(seat => {
+				seat.src = "seat_select.png"
+				seat.alt = "Ваше место"
+			})
+			const accept = confirm(`Места ${ i + 1 }-${ i + 3 } свободны. Принять?`)
+
+			if (!accept) {
+				selSeat = -1
+
+				currentSeats.forEach(seat => {
+					seat.src = "seat_avail.png"
+					seat.alt = "Место свободно"
+				})
+			} else {
+				seats[i] = false
+				seats[i + 1] = false
+				seats[i + 2] = false
+				break
+			}
+		}
+	}
+</script>
+</body>
+</html>

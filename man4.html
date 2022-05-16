@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Mandango - Билет в кино для Мачо</title>
+</head>
+<body onload="initSeats();">
+<div style="margin-top:75px; text-align:center">
+	<div class="">
+		<img id="0seat0" src="" alt="">
+		<img id="0seat1" src="" alt="">
+		<img id="0seat2" src="" alt="">
+		<img id="0seat3" src="" alt="">
+		<img id="0seat4" src="" alt="">
+		<img id="0seat5" src="" alt="">
+	</div>
+	<div class="">
+		<img id="1seat0" src="" alt="">
+		<img id="1seat1" src="" alt="">
+		<img id="1seat2" src="" alt="">
+		<img id="1seat3" src="" alt="">
+		<img id="1seat4" src="" alt="">
+		<img id="1seat5" src="" alt="">
+	</div>
+	<div class="">
+		<img id="2seat0" src="" alt="">
+		<img id="2seat1" src="" alt="">
+		<img id="2seat2" src="" alt="">
+		<img id="2seat3" src="" alt="">
+		<img id="2seat4" src="" alt="">
+		<img id="2seat5" src="" alt="">
+	</div>
+
+	<br>
+	<input type="button" id="findseat" value="Найти место" onclick="findSeat();">
+</div>
+
+<script>
+	const seats = [
+		[ false, true, false, true, true, true ],
+		[ false, true, false, true, false, true ],
+		[ false, true, false, true, true, true ]
+	]
+	let selSeat = -1
+
+	const initSeats = () => {
+		seats.forEach((row, j) => {
+			row.forEach((seat, i) => {
+				const currentSeat = document.getElementById(j + "seat" + i)
+				if (seat) {
+					currentSeat.src = "seat_avail.png"
+					currentSeat.alt = "Место свободно"
+				} else {
+					currentSeat.src = "seat_unavail.png"
+					currentSeat.alt = "Место занято"
+				}
+			})
+		})
+	}
+
+	const findSeat = () => {
+		for (let i = 0; i< seats.length; ++i) {
+			const accept = findSeatInRow(seats[i], i)
+			if (accept) break
+		}
+	}
+
+	const findSeatInRow = (seatRow, rowNum) => {
+		if (selSeat >= 0) {
+			selSeat = -1
+			initSeats()
+		}
+			let accept
+
+		for (let i = 0; i < seatRow.length; ++i) {
+			const nextTreeSeats = seatRow[i] && seatRow[i + 1] && seatRow[i + 2]
+			if (!nextTreeSeats) continue
+
+			const currentSeats = [
+				document.getElementById(rowNum + "seat" + i),
+				document.getElementById(rowNum + "seat" + (i + 1)),
+				document.getElementById(rowNum + "seat" + (i + 2))
+			]
+
+			selSeat = i
+			currentSeats.forEach(seat => {
+				seat.src = "seat_select.png"
+				seat.alt = "Ваше место"
+			})
+			 accept = confirm(`Места ${ i + 1 }-${ i + 3 } в ${rowNum +1
+			} ряду свободны. Принять?`)
+
+			if (!accept) {
+				selSeat = -1
+				currentSeats.forEach(seat => {
+					seat.src = "seat_avail.png"
+					seat.alt = "Место свободно"
+				})
+			} else {
+				seatRow[i] = false
+				seatRow[i + 1] = false
+				seatRow[i + 2] = false
+				break
+			}
+
+		}
+			return accept
+	}
+</script>
+</body>
+</html>
